@@ -15,6 +15,7 @@ import (
 type (
 	// System Actor系统
 	System struct {
+		eventMap
 		app              cfacade.IApplication
 		actorMap         *sync.Map          // key:actorID, value:*actor
 		localInvokeFunc  cfacade.InvokeFunc // default local func
@@ -380,14 +381,7 @@ func (p *System) PostEvent(data cfacade.IEventData) {
 		return
 	}
 
-	p.actorMap.Range(func(key, value any) bool {
-		if thisActor, found := value.(*Actor); found {
-			if thisActor.state == WorkerState {
-				thisActor.event.Push(data)
-			}
-		}
-		return true
-	})
+	p.eventMap.PostEvent(data)
 }
 
 func (p *System) SetLocalInvoke(fn cfacade.InvokeFunc) {

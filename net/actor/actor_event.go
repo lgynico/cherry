@@ -26,6 +26,8 @@ func (p *actorEvent) Register(name string, fn IEventFunc) {
 	funcList := p.funcMap[name]
 	funcList = append(funcList, fn)
 	p.funcMap[name] = funcList
+
+	p.thisActor.system.Register(name, p.thisActor)
 }
 
 func (p *actorEvent) Registers(names []string, fn IEventFunc) {
@@ -38,6 +40,7 @@ func (p *actorEvent) Registers(names []string, fn IEventFunc) {
 // name 事件名
 func (p *actorEvent) Unregister(name string) {
 	delete(p.funcMap, name)
+	p.thisActor.system.Unregister(p.thisActor)
 }
 
 func (p *actorEvent) Push(data cfacade.IEventData) {
